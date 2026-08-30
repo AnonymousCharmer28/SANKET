@@ -1,0 +1,11 @@
+# Ignore the virtual environment
+venv/
+__pycache__/
+
+# Ignore the massive dataset and CSV
+dataset/
+isl_features.csv
+
+# Ignore the serialized machine learning models
+models/
+*.pkl
