@@ -14,9 +14,22 @@ def train_model():
         print("Error: isl_features.csv not found. Run extract.py first.")
         return
 
-    # Verify what we extracted
+    # --- STEP 1: SCRUB DEAD DATA ---
+    print("Scrubbing corrupted frames and empty coordinates...")
+    # Drop rows where MediaPipe failed and output all zeros
+    df = df.loc[(df.drop('label', axis=1) != 0).any(axis=1)]
+    # Drop any nulls or exact duplicate frames
+    df = df.dropna()
+    df = df.drop_duplicates()
+    
     num_classes = df['label'].nunique()
-    print(f"Data loaded! Found {len(df)} total images across {num_classes} classes.")
+    print(f"Clean data loaded! Found {len(df)} valid images across {num_classes} classes.")
+
+    # --- STEP 2: FORCE A BALANCED DATASET ---
+    print("Balancing dataset to prevent class bias...")
+    min_count = df['label'].value_counts().min()
+    df = df.groupby('label').sample(n=min_count, random_state=42)
+    print(f"Dataset balanced! Every class now has exactly {min_count} rows.")
 
     X = df.drop('label', axis=1)
     y = df['label']
@@ -27,9 +40,10 @@ def train_model():
     print("Splitting data into 80% training and 20% testing...")
     X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42)
 
-    # n_jobs=-1 utilizes all CPU cores for significantly faster training
+    # --- STEP 3: UNCHAINED RANDOM FOREST ---
     print("Training Random Forest Classifier (this may take a few seconds)...")
-    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
+    clf = RandomForestClassifier(n_estimators=300, random_state=42, n_jobs=-1)
+    
     clf.fit(X_train, y_train)
 
     print("Evaluating model...")
@@ -40,7 +54,6 @@ def train_model():
     print(f"Overall Accuracy: {accuracy * 100:.2f}%")
     print("-" * 50)
     
-    # Optional: Print detailed accuracy for each individual letter
     print("Generating detailed classification report...")
     print(classification_report(y_test, y_pred, target_names=le.classes_))
 

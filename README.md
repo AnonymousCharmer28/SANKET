@@ -78,6 +78,8 @@ These features are then used to train a machine learning classifier to recognize
 * **Machine Learning Classification** — Uses a Random Forest classifier for gesture classification.
 * **Feature-Based Pipeline** — Separates computer vision feature extraction from model training.
 * **Portable Model Artifacts** — Trained models can be serialized for later integration with an application or API.
+* **Text-to-Speech (TTS) Integration:** Features native browser-based vocalization to convert compiled ISL text strings into audible speech, closing the communication loop.
+* **Accessibility-First Roadmap:** Transitioning from manual interface controls to custom hand-gesture triggers for completely hands-free interaction.
 
 ---
 
@@ -246,6 +248,8 @@ Potential future development includes:
 * Backend API integration
 * Model optimization and benchmarking
 * Support for a broader range of ISL vocabulary
+* Hands-free gesture-driven TTS activation
+* End-to-end accessibility workflow optimization
 
 ---
 
